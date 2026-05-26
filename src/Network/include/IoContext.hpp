@@ -43,10 +43,13 @@ public:
 
     void stop() noexcept;
 
+    void poll();
+
 private:
     std::vector<pollfd> _pollFds;
-    std::unordered_map<int, std::queue<PendingOperation> > _pendingOperations;
-    bool _stop = false;
+    std::unordered_map<int, std::queue<PendingOperation>> _pendingOperations;
+    bool _stop    = false;
+    bool _running = false;
 
     void updateEventType(const int &fileDescriptor);
 

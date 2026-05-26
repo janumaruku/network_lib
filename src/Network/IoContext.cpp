@@ -11,12 +11,14 @@
 #include <ranges>
 #include <system_error>
 
+#include "constants.hpp"
+
 namespace network {
 void IOContext::registerFileDescriptor(const int &fileDescriptor)
 {
     _pollFds.push_back({
-        .fd = fileDescriptor,
-        .events = POLLIN,
+        .fd      = fileDescriptor,
+        .events  = POLLIN,
         .revents = 0,
     });
 }
@@ -49,13 +51,56 @@ void IOContext::postWrite(const int &fileDescriptor,
     updateEventType(fileDescriptor);
 }
 
+void IOContext::run()
+{
+    _running = true;
+
+    while (true) {
+        if (::poll(_pollFds.data(), _pollFds.size(), 10) == -1)
+            throw std::runtime_error(
+                utils::RED + "Error: " + utils::RESET + std::string{
+                    strerror(errno)
+                });
+
+        handleReadyFileDescriptors();
+
+        if (_stop && std::ranges::all_of(_pendingOperations,
+            [](const auto &entry) {
+                return entry.second.empty();
+            }))
+            break;
+    }
+
+    _running = false;
+}
+
+void IOContext::stop() noexcept
+{
+    _stop = true;
+}
+
+void IOContext::poll()
+{
+    if (_running)
+        throw std::runtime_error(
+            utils::RED + "Error: " + utils::RESET +
+            "The IOContext loop is already running");
+
+    if (::poll(_pollFds.data(), _pollFds.size(), 10) == -1)
+        throw std::runtime_error(
+            utils::RED + "Error: " + utils::RESET + std::string
+            {strerror(errno)});
+
+    handleReadyFileDescriptors();
+}
+
 void IOContext::updateEventType(const int &fileDescriptor)
 {
     if (_pendingOperations.contains(fileDescriptor) &&
         !_pendingOperations.at(fileDescriptor).empty()) {
         const OpType opType = _pendingOperations.at(fileDescriptor).front().
-            first;
-        auto itt = std::ranges::find_if(_pollFds,
+                                                 first;
+        const auto itt = std::ranges::find_if(_pollFds,
             [fileDescriptor](const pollfd &pollFd) {
                 return pollFd.fd == fileDescriptor;
             });
@@ -95,7 +140,7 @@ void IOContext::triggerHandler(const int &itt)
 
     if (_pollFds[itt].revents & (POLLIN | POLLOUT) && (
         _pendingOperations.contains(fd) && !_pendingOperations.
-        at(fd).empty())) {
+                                            at(fd).empty())) {
         const auto [opType, handler] = _pendingOperations.at(fd).
             front();
         _pendingOperations.at(fd).pop();
@@ -103,20 +148,5 @@ void IOContext::triggerHandler(const int &itt)
         handler();
         updateEventType(fd);
     }
-}
-
-void IOContext::run()
-{
-    while (true) {
-        if (poll(_pollFds.data(), _pollFds.size(), 10) == -1)
-            throw std::system_error(std::make_error_code(std::errc::timed_out));
-
-        handleReadyFileDescriptors();
-    }
-}
-
-void IOContext::stop() noexcept
-{
-    _stop = true;
 }
 }

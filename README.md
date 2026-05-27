@@ -59,7 +59,7 @@ Start the server on a port of your choice:
 In a separate terminal, start the client:
 
 ```bash
-./client
+./client 8080 127.0.0.1
 ```
 
 The client connects to `127.0.0.1:8080` by default. Once connected, use the interactive shell:

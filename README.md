@@ -1,6 +1,6 @@
 # network_lib
 
-A C++ network library with the necessary features to implement a basic TCP server and client
+A C++ network library with the necessary features to implement a basic TCP server and client. The architecture of the library is inspired by [boost::asio](https://www.boost.org/doc/libs/latest/doc/html/boost_asio/overview.html) architecture. Yet, it's a very lightweight version of the architecture for it doesn't cover all the provided features of boost::asio.
 
 ## What has been implemented
 
@@ -59,7 +59,7 @@ Start the server on a port of your choice:
 In a separate terminal, start the client:
 
 ```bash
-./client
+./client 8080 127.0.0.1
 ```
 
 The client connects to `127.0.0.1:8080` by default. Once connected, use the interactive shell:
@@ -69,11 +69,14 @@ tcp/client> send hello
 Message received...
 
 tcp/client> help send
-Usage: send <message>
-  Send a command to the server
+Usage
+    send <message>
 
-Arguments:
-  message  (required)  Message to send to the server
+Description
+    Send a command to the server
+
+Argument(s)
+    message    Message to send to the server
 
 tcp/client> exit
 ```

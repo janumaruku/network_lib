@@ -18,7 +18,7 @@ TCPClient::TCPClient(const int &port, const std::string &host): _port{port},
 
 void TCPClient::send(const std::string &message) const
 {
-    _socket.asyncWrite(network::buffer(message + "\r\n"),
+    _socket.write(network::buffer(message + "\r\n"),
         [](auto, auto) {});
 }
 

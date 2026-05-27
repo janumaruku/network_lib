@@ -27,8 +27,8 @@ public:
 private:
     int _port;
     std::string _host;
+    network::IOContext _ioContext{};
     network::ConnectedSocket _socket;
-    network::IOContext _ioContext;
-    std::string _readBuffer;
+    std::string _readBuffer = std::string(1024, '\0');
     std::string _transmission;
 };

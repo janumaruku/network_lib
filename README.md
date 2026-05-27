@@ -18,18 +18,10 @@ The core networking primitives:
 - **`Router`** — base for dispatching incoming messages to handlers.
 - **`ErrorCode`** — custom `std::error_code` values for socket operations.
 
-### `shell` (static library)
-
-A composable interactive shell framework:
-
-- **`Shell`** — REPL loop with prompt, built-in `help` and `exit` commands, and middleware support.
-- **`CommandBuilder`** — fluent builder for registering commands with positional arguments, options, and flags.
-- **`CommandContext`** — runtime context passed to command handlers, providing typed access to parsed arguments.
-- **`HelpFormatter`** — formats per-command and full-command-list help output.
-
 ### `server` binary
 
 A TCP server (`TCPServer`) that:
+
 - Listens on a configurable port.
 - Accepts clients asynchronously.
 - Greets each client with `Connection accepted.`
@@ -38,6 +30,7 @@ A TCP server (`TCPServer`) that:
 ### `client` binary
 
 A TCP client (`TCPClient`) that:
+
 - Connects to the server on startup and prints the welcome message.
 - Launches an interactive shell (`tcp/client> ` prompt).
 - Exposes a `send <message>` command that sends a message to the server and prints the response.
@@ -84,4 +77,17 @@ Arguments:
   message  (required)  Message to send to the server
 
 tcp/client> exit
+```
+
+On the server side:
+
+
+
+```shell
+➜  bash> ./server 8080
+[ACCEPTOR] Connection received ...
+Connection accepted from: 127.0.0.1:56208
+Hello from client
+
+Connection closed
 ```

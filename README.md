@@ -1,6 +1,6 @@
 # network_lib
 
-A C++20 TCP networking library with an event-loop based on `poll(2)`, bundled with a TCP server, a TCP client, and an interactive shell framework.
+A C++ network library with the necessary features to implement a basic TCP server and client
 
 ## What has been implemented
 
@@ -8,15 +8,14 @@ A C++20 TCP networking library with an event-loop based on `poll(2)`, bundled wi
 
 The core networking primitives:
 
-- **`IOContext`** — event loop built on `poll(2)`. Supports `run()` (blocking loop), `poll()` (single tick), `postRead`, and `postWrite` for scheduling async operations.
-- **`ConnectedSocket`** — wraps a TCP socket file descriptor. Exposes both synchronous (`read`, `write`) and asynchronous (`asyncReadSome`, `asyncWrite`) operations.
-- **`ListeningSocket`** — wraps a passive (server-side) socket.
-- **`Acceptor`** — accepts incoming connections asynchronously via `asyncAccept`.
-- **`Endpoint`** — holds an IP address and port, wraps `sockaddr_in`.
-- **`Buffer`** — lightweight `ConstBuffer` / `MutableBuffer` view types and `network::buffer()` helpers.
-- **`Serializer`** — base for serializing structured data over the wire.
-- **`Router`** — base for dispatching incoming messages to handlers.
-- **`ErrorCode`** — custom `std::error_code` values for socket operations.
+- **`IOContext`**: event loop built on `poll(2)`. Supports `run()` (blocking loop), `poll()` (single tick), `postRead`, and `postWrite` for scheduling async operations.
+- **`ConnectedSocket`**: wraps a TCP socket file descriptor. Exposes both synchronous (`read`, `write`) and asynchronous (`asyncReadSome`, `asyncWrite`) operations.
+- **`ListeningSocket`**: wraps a passive (server-side) socket. It's used by the `Acceptor` to accept new connection.
+- **`Acceptor`**: accepts incoming connections asynchronously via `asyncAccept`.
+- **`Endpoint`**: holds an IP address (ipv4) and port, wraps `sockaddr_in`.
+- **`Buffer`**: utils to create buffers (`ConstBuffer`/`MutableBuffer`), used for input/output operations.
+- **`Router`**: base for dispatching incoming messages to handlers. Used for http-like servers
+- **`ErrorCode`**: custom `std::error_code` values for socket operations.
 
 ### `server` binary
 
@@ -80,8 +79,6 @@ tcp/client> exit
 ```
 
 On the server side:
-
-
 
 ```shell
 ➜  bash> ./server 8080

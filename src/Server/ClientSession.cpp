@@ -10,7 +10,7 @@
 ClientSession::ClientSession(
     const std::shared_ptr<network::ConnectedSocket> &socket): _socket{socket}
 {
-    _readBuffer.reserve(1024);
+    _readBuffer.resize(1024);
 }
 
 void ClientSession::start()
@@ -36,9 +36,11 @@ void ClientSession::handleRead()
         });
 }
 
-void ClientSession::handleWrite(const std::string &message) const
+void ClientSession::handleWrite()
 {
-    _socket->asyncWrite(network::buffer(message + "\r\n"), [](auto, auto) {});
+    _writeBuffer += "\r\n";
+
+    _socket->asyncWrite(network::buffer(_writeBuffer), [](auto, auto) {});
 }
 
 void ClientSession::handleTransmission(const size_t &bytes)
@@ -52,9 +54,11 @@ void ClientSession::handleTransmission(const size_t &bytes)
         // Send _data to a processor function or a dispatcher to
         // be interpreted.
 
-        handleWrite("Message received:");
+        _writeBuffer = "Message received...";
+        handleWrite();
 
         _transmission.clear();
+        handleRead();
         return;
     }
 

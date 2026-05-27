@@ -7,9 +7,13 @@
 
 #include <iostream>
 
+#include "TcpServer.hpp"
+
 int main()
 {
-    std::cout << "Hello world!" << std::endl;
+    TCPServer server{4242, "127.0.0.1"};
+
+    server.run();
 
     return 0;
 }

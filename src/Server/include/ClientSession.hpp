@@ -20,11 +20,12 @@ public:
 private:
     std::shared_ptr<network::ConnectedSocket> _socket;
     std::string _readBuffer;
+    std::string _writeBuffer;
     std::string _transmission;
 
     void handleRead();
 
-    void handleWrite(const std::string &message) const;
+    void handleWrite();
 
     void handleTransmission(const size_t &bytes);
 };

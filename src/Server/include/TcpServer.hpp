@@ -10,6 +10,7 @@
 #include <string>
 
 #include "Acceptor.hpp"
+#include "ClientSession.hpp"
 #include "IoContext.hpp"
 
 class TCPServer {
@@ -25,6 +26,7 @@ public:
 private:
     network::IOContext _ioContext;
     network::Acceptor _acceptor;
+    std::vector<ClientSession> _clients;
 
     void startAccept();
 };

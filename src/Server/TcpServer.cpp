@@ -31,8 +31,12 @@ void TCPServer::startAccept()
             std::cout << "Connection accepted from: " << endpoint.
                 getHostname() << ":" << endpoint.getPort() << std::endl;
 
-            socket->write(network::buffer(std::string{"Connection accepted"}),
+            socket->write(network::buffer(std::string{"Connection accepted.\r\n"}),
                 [](auto, auto) {});
+
+            _clients.emplace_back(socket);
+            _clients.back().start();
+
             startAccept();
         });
 }

@@ -69,11 +69,14 @@ tcp/client> send hello
 Message received...
 
 tcp/client> help send
-Usage: send <message>
-  Send a command to the server
+Usage
+    send <message>
 
-Arguments:
-  message  (required)  Message to send to the server
+Description
+    Send a command to the server
+
+Argument(s)
+    message    Message to send to the server
 
 tcp/client> exit
 ```

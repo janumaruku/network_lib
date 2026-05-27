@@ -1,6 +1,6 @@
 # network_lib
 
-A C++ network library with the necessary features to implement a basic TCP server and client
+A C++ network library with the necessary features to implement a basic TCP server and client. The architecture of the library is inspired by [boost::asio]{https://www.boost.org/doc/libs/latest/doc/html/boost_asio/overview.html} architecture. Yet, it's a very lightweight version of the architecture for it doesn't cover all the provided features of boost::asio.
 
 ## What has been implemented
 

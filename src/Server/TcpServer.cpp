@@ -11,6 +11,12 @@ TCPServer::TCPServer(const std::string &host, const int &port): _host{host},
     _port{port}, _acceptor{_ioContext, network::Endpoint{port}}
 {}
 
+void TCPServer::run()
+{
+    startAccept();
+    _ioContext.run();
+}
+
 void TCPServer::startAccept()
 {
     _acceptor.asyncAccept([this](const std::error_code &error,

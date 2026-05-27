@@ -94,6 +94,17 @@ void IOContext::poll()
     handleReadyFileDescriptors();
 }
 
+void IOContext::pollAll()
+{
+    if (_running)
+        throw std::runtime_error(
+            utils::RED + "Error: " + utils::RESET +
+            "The IOContext loop is already running");
+
+    while (::poll(_pollFds.data(), _pollFds.size(), 0) > 0)
+        handleReadyFileDescriptors();
+}
+
 void IOContext::updateEventType(const int &fileDescriptor)
 {
     if (_pendingOperations.contains(fileDescriptor) &&

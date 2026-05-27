@@ -45,6 +45,8 @@ public:
 
     void poll();
 
+    void pollAll();
+
 private:
     std::vector<pollfd> _pollFds;
     std::unordered_map<int, std::queue<PendingOperation>> _pendingOperations;

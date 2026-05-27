@@ -26,7 +26,6 @@ int main()
          .action(
              [&client](shell::command::CommandContext &ctx) {
                  const auto message = ctx.arg("message");
-                 std::clog << "Message to send: " << message << std::endl;
                  client.send(message);
                  const auto response = client.receive();
                  std::cout << response << std::endl;

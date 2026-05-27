@@ -17,61 +17,13 @@
 
 namespace shell {
 
-Prompt::Prompt(std::string promptStr, std::function<void()> onIdle)
-    : _prompt_str{std::move(promptStr)}, _on_idle{std::move(onIdle)}
-{
-}
-
-// ── TTY helpers ──────────────────────────────────────────────────────────────
-
-void Prompt::eraseLine() const
-{
-    write(STDOUT_FILENO, "\r\x1b[K", 4);
-}
-
-void Prompt::redraw() const
-{
-    write(STDOUT_FILENO, "\r", 1);
-    write(STDOUT_FILENO, _prompt_str.c_str(), _prompt_str.size());
-
-    const std::string &text = _buffer.text();
-    write(STDOUT_FILENO, text.c_str(), text.size());
-
-    if (!_buffer.atEnd()) {
-        const std::size_t n   = text.size() - _buffer.cursor();
-        const std::string esc = "\x1b[" + std::to_string(n) + "D";
-        write(STDOUT_FILENO, esc.c_str(), esc.size());
-    }
-}
-
-std::string Prompt::readSequence()
-{
-    char c = 0;
-    if (read(STDIN_FILENO, &c, 1) <= 0)
-        return "";
-
-    if (c != '\x1b')
-        return std::string(1, c);
-
-    // ESC: greedily read up to 2 more bytes within 5 ms
-    std::string seq = "\x1b";
-    for (int i = 0; i < 2; ++i) {
-        pollfd pfd = {.fd = STDIN_FILENO, .events = POLLIN, .revents = 0};
-        if (poll(&pfd, 1, 5) <= 0)
-            break;
-        char next = 0;
-        if (read(STDIN_FILENO, &next, 1) <= 0)
-            break;
-        seq += next;
-    }
-    return seq;
-}
-
-// ── Main entry point ─────────────────────────────────────────────────────────
+Prompt::Prompt(std::string promptStr, std::function<void()> onIdle): _prompt_str
+    {std::move(promptStr)}, _on_idle{std::move(onIdle)}
+{}
 
 std::optional<std::string> Prompt::getline()
 {
-    if (!isatty(STDIN_FILENO)) {
+    if (isatty(STDIN_FILENO) == 0) {
         std::cout << _prompt_str << std::flush;
         std::string line;
         if (!std::getline(std::cin, line))
@@ -85,7 +37,7 @@ std::optional<std::string> Prompt::getline()
     write(STDOUT_FILENO, _prompt_str.c_str(), _prompt_str.size());
 
     while (true) {
-        pollfd pfd = {.fd = STDIN_FILENO, .events = POLLIN, .revents = 0};
+        pollfd pfd      = {.fd = STDIN_FILENO, .events = POLLIN, .revents = 0};
         const int ready = poll(&pfd, 1, 100);
 
         if (ready == -1) {
@@ -114,7 +66,7 @@ std::optional<std::string> Prompt::getline()
                 write(STDOUT_FILENO, "\n", 1);
                 return std::nullopt;
             }
-            continue; // Ctrl+D on non-empty line: ignore (bash behaviour)
+            continue;
         }
 
         if (seq.empty())
@@ -128,8 +80,6 @@ std::optional<std::string> Prompt::getline()
     }
 }
 
-// ── Public interface ─────────────────────────────────────────────────────────
-
 void Prompt::setPrompt(std::string promptStr) noexcept
 {
     _prompt_str = std::move(promptStr);
@@ -140,12 +90,46 @@ const std::string &Prompt::getPrompt() const noexcept
     return _prompt_str;
 }
 
-void Prompt::print(const std::string &message)
+std::string Prompt::readSequence()
 {
-    eraseLine();
-    write(STDOUT_FILENO, message.c_str(), message.size());
-    write(STDOUT_FILENO, "\n", 1);
-    redraw();
+    char c = 0;
+    if (read(STDIN_FILENO, &c, 1) <= 0)
+        return "";
+
+    if (c != '\x1b')
+        return {1, c};
+
+    std::string seq = "\x1b";
+    for (auto i = 0; i < 2; ++i) {
+        pollfd pfd = {.fd = STDIN_FILENO, .events = POLLIN, .revents = 0};
+        if (poll(&pfd, 1, 5) <= 0)
+            break;
+        char next = 0;
+        if (read(STDIN_FILENO, &next, 1) <= 0)
+            break;
+        seq += next;
+    }
+    return seq;
+}
+
+void Prompt::redraw() const
+{
+    write(STDOUT_FILENO, "\r", 1);
+    write(STDOUT_FILENO, _prompt_str.c_str(), _prompt_str.size());
+
+    const std::string &text = _buffer.text();
+    write(STDOUT_FILENO, text.c_str(), text.size());
+
+    if (!_buffer.atEnd()) {
+        const std::size_t n   = text.size() - _buffer.cursor();
+        const std::string esc = "\x1b[" + std::to_string(n) + "D";
+        write(STDOUT_FILENO, esc.c_str(), esc.size());
+    }
+}
+
+void Prompt::eraseLine()
+{
+    write(STDOUT_FILENO, "\r\x1b[K", 4);
 }
 
 } // namespace shell

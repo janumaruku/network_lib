@@ -26,19 +26,17 @@ public:
 
     const std::string &getPrompt() const noexcept;
 
-    void print(const std::string &message);
-
 private:
     std::string _prompt_str;
     std::function<void()> _on_idle;
     LineBuffer _buffer;
     KeyDispatcher _dispatcher;
 
-    std::string readSequence();
+    static std::string readSequence();
 
     void redraw() const;
 
-    void eraseLine() const;
+    static void eraseLine() ;
 };
 
 } // namespace shell

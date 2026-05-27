@@ -9,9 +9,14 @@
 
 #include "TcpServer.hpp"
 
-int main()
+int main(const int argc, const char *argv[])
 {
-    TCPServer server{4242, "127.0.0.1"};
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
+        return 84;
+    }
+
+    TCPServer server{std::atoi(argv[1]), "127.0.0.1"};
 
     server.run();
 

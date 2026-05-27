@@ -12,9 +12,14 @@
 #include "Shell.hpp"
 #include "TcpClient.hpp"
 
-int main()
+int main(const int argc, const char *argv[])
 {
-    TCPClient client{4242, "127.0.0.1"};
+    if (argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " <port> <host>" << std::endl;
+        return 84;
+    }
+
+    TCPClient client{std::atoi(argv[1]), argv[2]};
     const auto sendCommand = shell::command::CommandBuilder()
          .name("send")
          .description("Send a command to the server")

@@ -1,6 +1,8 @@
 add_executable(server main.cpp
         TcpServer.cpp
-        include/TcpServer.hpp)
+        include/TcpServer.hpp
+        ClientSession.cpp
+        include/ClientSession.hpp)
 
 target_include_directories(server PRIVATE include)
 

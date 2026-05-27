@@ -16,15 +16,13 @@ class TCPServer {
 public:
     TCPServer() = delete;
 
-    explicit TCPServer(const std::string &host, const int &port);
+    explicit TCPServer(const int &port, const std::string &host);
 
     ~TCPServer() = default;
 
     void run();
 
 private:
-    std::string _host;
-    int _port;
     network::IOContext _ioContext;
     network::Acceptor _acceptor;
 

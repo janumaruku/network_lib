@@ -7,8 +7,8 @@
 
 #include "TcpServer.hpp"
 
-TCPServer::TCPServer(const std::string &host, const int &port): _host{host},
-    _port{port}, _acceptor{_ioContext, network::Endpoint{port}}
+TCPServer::TCPServer(const int &port, const std::string &host):
+    _acceptor{_ioContext, network::Endpoint{port, host}}
 {}
 
 void TCPServer::run()

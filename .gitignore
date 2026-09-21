@@ -54,3 +54,10 @@ build/
 
 # useless files
 doc.md
+
+# doxygen
+doxygen-1.13.2/
+doxygen-1.13.2.linux.bin.tar.gz
+Doxyfile.bak
+docs/doxygen-awesome-css/
+docs/generated/

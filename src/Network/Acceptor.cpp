@@ -61,7 +61,6 @@ FtpErrorCode Acceptor::getAcceptorErrorCode(const int &error)
         {EINTR, FtpErrorCode::RETRY_ACCEPT},
         {EINVAL, FtpErrorCode::ACCEPT_INVALID_STATE},
         {EMFILE, FtpErrorCode::ACCEPT_RESOURCE_EXHAUSTED},
-        {ENFILE, FtpErrorCode::ACCEPT_RESOURCE_EXHAUSTED},
         {ENOBUFS, FtpErrorCode::ACCEPT_RESOURCE_EXHAUSTED},
         {ENOMEM, FtpErrorCode::ACCEPT_RESOURCE_EXHAUSTED},
         {ENOTSOCK, FtpErrorCode::ACCEPT_BAD_FILE_DESCRIPTOR},
